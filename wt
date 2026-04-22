@@ -1,0 +1,47 @@
+function check() {
+  let username = document.getElementById('username').value;
+  let password = document.getElementById('password').value;
+
+  let hasNumber = false;
+  let hasCapital = false;
+  let hasSpecial = false;
+
+  for (let i = 0; i < password.length; i++) {
+    let ch = password[i];
+
+    if (ch >= 'A' && ch <= 'Z') {
+      hasCapital = true;
+    }
+    else if (ch >= '0' && ch <= '9') {
+      hasNumber = true;
+    }
+    else if (!(/[a-zA-Z0-9]/.test(ch))) {
+      hasSpecial = true;
+    }
+  }
+
+  if (username.length < 6) {
+    alert("Username must be at least 6 characters");
+    return false;
+  }
+  if (password.length < 8) {
+    alert("Password must be at least 8 characters");
+    return false;
+  }
+  if (!hasCapital) {
+    alert("Password must contain at least one capital letter");
+    return false;
+  }
+  if (!hasSpecial) {
+    alert("Password must contain at least one special character");
+    return false;
+  }
+  if (!hasNumber) {
+    alert("Password must contain at least one number");
+    return false;
+  }
+
+  alert("Login Successful!");
+  return true;
+}
+
