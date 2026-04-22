@@ -1,0 +1,174 @@
+import java.sql.*;
+import java.util.Scanner;
+
+public class App {
+    static String tableName;
+
+    public static void main(String[] args) throws Exception {
+        Scanner sc = new Scanner(System.in);
+        MyDriver driver = new MyDriver();
+
+        driver.connection();
+        System.out.println("✅ Connection Established");
+
+        while (true) {
+            System.out.println("\n===== MENU =====");
+            System.out.println("1. Create Table");
+            System.out.println("2. Insert Data");
+            System.out.println("3. View Table");
+            System.out.println("4. Update Data");
+            System.out.println("5. Delete Data");
+            System.out.println("6. Exit");
+
+            System.out.print("Enter choice: ");
+            int choice = Integer.parseInt(sc.nextLine());
+
+            switch (choice) {
+
+                case 1: {
+                    System.out.print("Enter table name: ");
+                    tableName = sc.nextLine().trim();
+                    driver.createTable(tableName);
+                    System.out.println("✅ Table created successfully!");
+                    break;
+                }
+
+                case 2: {
+                    System.out.print("Enter table name: ");
+                    String table = sc.nextLine();
+
+                    System.out.print("Enter ID: ");
+                    int id = Integer.parseInt(sc.nextLine());
+
+                    System.out.print("Enter Name: ");
+                    String name = sc.nextLine();
+
+                    System.out.print("Enter Branch: ");
+                    String branch = sc.nextLine();
+
+                    driver.insertData(table, id, name, branch);
+                    System.out.println("✅ Data inserted successfully!");
+                    break;
+                }
+
+                case 3: {
+                    System.out.print("Enter table name: ");
+                    String table = sc.nextLine();
+                    driver.selectAll(table);
+                    break;
+                }
+
+                case 4: {
+                    System.out.print("Enter table name: ");
+                    String table = sc.nextLine();
+
+                    System.out.print("Enter ID to update: ");
+                    int id = Integer.parseInt(sc.nextLine());
+
+                    System.out.print("Enter new Name: ");
+                    String name = sc.nextLine();
+
+                    System.out.print("Enter new Branch: ");
+                    String branch = sc.nextLine();
+
+                    driver.updateData(table, id, name, branch);
+                    System.out.println("✅ Data updated successfully!");
+                    break;
+                }
+
+                case 5: {
+                    System.out.print("Enter table name: ");
+                    String table = sc.nextLine();
+
+                    System.out.print("Enter ID to delete: ");
+                    int id = Integer.parseInt(sc.nextLine());
+
+                    driver.deleteData(table, id);
+                    System.out.println("✅ Data deleted successfully!");
+                    break;
+                }
+
+                case 6: {
+                    System.out.println("👋 Exiting...");
+                    System.exit(0);
+                }
+
+                default:
+                    System.out.println("❌ Invalid choice");
+            }
+        }
+    }
+}
+
+class MyDriver {
+
+    final String url = "jdbc:mysql://localhost:3306/javalab";
+    final String userName = "root";
+    final String password = "yourpassword";
+
+    Connection con;
+
+    public void connection() throws Exception {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        con = DriverManager.getConnection(url, userName, password);
+    }
+
+    // CREATE TABLE
+    public void createTable(String tableName) throws Exception {
+        String query = "CREATE TABLE IF NOT EXISTS `" + tableName + "` (" +
+                "id INT PRIMARY KEY, " +
+                "name VARCHAR(20) NOT NULL, " +
+                "branch VARCHAR(5) NOT NULL)";
+        Statement st = con.createStatement();
+        st.executeUpdate(query);
+    }
+
+    // INSERT
+    public void insertData(String tableName, int id, String name, String branch) throws Exception {
+        String query = "INSERT INTO `" + tableName + "` VALUES (?, ?, ?)";
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setInt(1, id);
+        ps.setString(2, name);
+        ps.setString(3, branch);
+        ps.executeUpdate();
+    }
+
+    // SELECT
+    public void selectAll(String tableName) throws Exception {
+        String query = "SELECT * FROM `" + tableName + "`";
+        Statement st = con.createStatement();
+
+        try {
+            ResultSet rs = st.executeQuery(query);
+
+            System.out.println("\n===== TABLE DATA =====");
+            while (rs.next()) {
+                System.out.println(rs.getInt("id") + " | " +
+                        rs.getString("name") + " | " +
+                        rs.getString("branch"));
+            }
+            System.out.println("======================");
+
+        } catch (Exception e) {
+            System.out.println("❌ Error: " + e.getMessage());
+        }
+    }
+
+    // UPDATE
+    public void updateData(String tableName, int id, String name, String branch) throws Exception {
+        String query = "UPDATE `" + tableName + "` SET name=?, branch=? WHERE id=?";
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setString(1, name);
+        ps.setString(2, branch);
+        ps.setInt(3, id);
+        ps.executeUpdate();
+    }
+
+    // DELETE
+    public void deleteData(String tableName, int id) throws Exception {
+        String query = "DELETE FROM `" + tableName + "` WHERE id=?";
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setInt(1, id);
+        ps.executeUpdate();
+    }
+}
