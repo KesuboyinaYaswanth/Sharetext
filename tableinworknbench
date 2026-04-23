@@ -1,0 +1,12 @@
+create schema javalab;
+
+use javalab;
+
+create table details(
+    name varchar(30),
+    password varchar(30)
+);
+
+insert into details values("Sumanth", "Sumanth@1010");
+insert into details values("abc", "abc@123");
+insert into details values("def", "def@123");
