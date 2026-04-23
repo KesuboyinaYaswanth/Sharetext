@@ -1,0 +1,4 @@
+javac -cp ".;mysql-connector-j-9.6.0.jar" App.java
+java -cp ".;mysql-connector-j-9.6.0.jar" App
+
+sqlplus yaswanthk/yash#25#
